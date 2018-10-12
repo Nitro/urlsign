@@ -92,7 +92,10 @@ func IsValidSignature(secret string, bucketSize time.Duration, baseTime time.Tim
 	sort.Strings(params)
 
 	// We re-assemble only the parts that are signed
-	reconstituted := fmt.Sprintf("%s?%s", parsed.Path, strings.Join(params, "&"))
+	reconstituted := parsed.Path
+	if len(params) > 0 {
+		reconstituted = fmt.Sprintf("%s?%s", reconstituted, strings.Join(params, "&"))
+	}
 
 	// Check each valid time bucket, starting wtih the current one
 	for _, bucket := range bucketsToCheck {
