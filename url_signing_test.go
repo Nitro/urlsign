@@ -75,7 +75,7 @@ func Test_IsValidSignature(t *testing.T) {
 		})
 
 		Convey("accepts signatures from the previous time bucket", func() {
-			baseTime = baseTime.Add(0-bucketSize)
+			baseTime = baseTime.Add(0 - bucketSize)
 			for _, url := range urls {
 				So(IsValidSignature(secret, bucketSize, baseTime, url), ShouldBeTrue)
 			}
@@ -89,10 +89,20 @@ func Test_IsValidSignature(t *testing.T) {
 		})
 
 		Convey("does not accept signatures from outside the bucket", func() {
-			baseTime = baseTime.Add(2*bucketSize)
+			baseTime = baseTime.Add(2 * bucketSize)
 			for _, url := range urls {
 				So(IsValidSignature(secret, bucketSize, baseTime, url), ShouldBeFalse)
 			}
+		})
+
+		Convey("validates a signed URL with no other GET parameters besides 'token'", func() {
+			So(
+				IsValidSignature(
+					secret, bucketSize, baseTime,
+					"http://example.com/hobbiton1?token=53016a7fc894f44392e0e5a47dc3fa84d8ee9313",
+				),
+				ShouldBeTrue,
+			)
 		})
 	})
 }
